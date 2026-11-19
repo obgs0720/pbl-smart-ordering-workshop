@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>校園智慧訂餐與分流系統 展示原型</title>
+  <style>
+    :root { --navy:#102a43; --blue:#1d70b8; --mint:#d9f2e6; --amber:#f6a609; --ink:#1f2933; --paper:#f7fafc; --line:#d9e2ec; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--paper); color:var(--ink); font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif; line-height:1.55; }
+    header { background:var(--navy); color:#fff; padding:1.5rem max(1rem, calc((100% - 1120px)/2)); }
+    header a { color:#fff; text-decoration:none; font-weight:700; }
+    .eyebrow { margin:0 0 .3rem; color:#b8e4ff; font-size:.9rem; letter-spacing:.08em; }
+    h1 { margin:0; font-size:clamp(1.5rem,4vw,2.25rem); }
+    header p { margin:.35rem 0 0; color:#e7f5ff; }
+    main { max-width:1120px; margin:auto; padding:1.5rem 1rem 3rem; }
+    .notice { background:#fff6d8; border-left:5px solid var(--amber); padding:.8rem 1rem; border-radius:.25rem; margin-bottom:1.4rem; }
+    .layout { display:grid; grid-template-columns:minmax(0,1.1fr) minmax(280px,.9fr); gap:1.25rem; }
+    .card { background:#fff; border:1px solid var(--line); border-radius:.75rem; padding:1.25rem; box-shadow:0 2px 7px rgba(16,42,67,.06); }
+    h2 { margin:.1rem 0 .85rem; color:var(--navy); font-size:1.25rem; }
+    .menu { display:grid; gap:.7rem; }
+    .food { border:1px solid var(--line); border-radius:.55rem; padding:.75rem; display:flex; align-items:center; justify-content:space-between; gap:1rem; }
+    .food strong { display:block; color:var(--navy); }
+    .food small { color:#52606d; }
+    button { font:inherit; cursor:pointer; border:0; border-radius:.4rem; padding:.55rem .8rem; font-weight:700; }
+    .add, .primary { background:var(--blue); color:white; }
+    .add:hover, .primary:hover { background:#155a96; }
+    .secondary { color:var(--navy); background:#eaf3fa; }
+    .slots { display:grid; grid-template-columns:repeat(2,1fr); gap:.55rem; }
+    .slot { text-align:left; border:2px solid #b8c9d9; background:#fff; color:var(--navy); }
+    .slot.selected { border-color:var(--blue); background:#e8f4fc; }
+    .slot[disabled] { background:#edf2f7; color:#7b8794; cursor:not-allowed; }
+    .cart { margin:.7rem 0; min-height:3rem; padding:.8rem; border-radius:.5rem; background:#f0f7fb; }
+    .order { margin-top:1rem; border-top:1px solid var(--line); padding-top:1rem; }
+    .result { display:none; margin-top:1rem; background:var(--mint); border:1px solid #8ac9aa; padding:1rem; border-radius:.5rem; }
+    .result.show { display:block; }
+    .code { display:inline-block; margin:.35rem 0; font-size:1.6rem; letter-spacing:.12em; font-weight:800; color:var(--navy); }
+    .status { display:grid; grid-template-columns:repeat(3,1fr); gap:.45rem; margin:.7rem 0; }
+    .status span { display:block; padding:.45rem; border-radius:.35rem; background:#e8eef4; text-align:center; font-size:.85rem; }
+    .status .active { background:#1d70b8; color:#fff; }
+    .counter { margin:.65rem 0; padding:.7rem; border-left:4px solid var(--blue); background:#edf8ff; }
+    table { width:100%; border-collapse:collapse; font-size:.92rem; }
+    th,td { padding:.55rem .35rem; border-bottom:1px solid var(--line); text-align:left; }
+    th { color:#486581; }
+    .pill { display:inline-block; border-radius:99px; padding:.13rem .45rem; font-size:.78rem; background:#e6eef5; }
+    .ready { background:#d9f2e6; color:#0f5132; }
+    .waiting { background:#fff1cc; color:#7a5200; }
+    .muted { color:#627d98; font-size:.9rem; }
+    @media (max-width:760px) { .layout { grid-template-columns:1fr; } .status { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html">← 返回 PBL 講座教學流程</a>
+    <p class="eyebrow">教學展示原型</p>
+    <h1>校園智慧訂餐與分流系統</h1>
+    <p>模擬資料，供 PBL 課程觀察流程、需求與系統解方。</p>
+  </header>
+  <main>
+    <div class="notice"><strong>試用任務：</strong>選擇一份餐點與取餐時段，完成訂餐後切換至店家看板，觀察分流如何改變備餐順序。此頁不蒐集真實訂單或個資。</div>
+    <div class="layout">
+      <section class="card" aria-labelledby="order-title">
+        <h2 id="order-title">學生訂餐</h2>
+        <p class="muted">先選餐，再選擇仍有容量的取餐時段。</p>
+        <div class="menu" aria-label="餐點選單">
+          <div class="food"><div><strong>香煎雞腿便當</strong><small>主食、時蔬、配菜</small></div><button class="add" data-food="香煎雞腿便當" data-price="95">加入 $95</button></div>
+          <div class="food"><div><strong>蔬食咖哩飯</strong><small>蔬菜、鷹嘴豆、糙米</small></div><button class="add" data-food="蔬食咖哩飯" data-price="85">加入 $85</button></div>
+          <div class="food"><div><strong>番茄牛肉麵</strong><small>牛肉、番茄、麵條</small></div><button class="add" data-food="番茄牛肉麵" data-price="110">加入 $110</button></div>
+        </div>
+        <div class="order">
+          <h2>取餐時段</h2>
+          <div class="slots" id="slots" aria-label="選擇取餐時段">
+            <button class="slot" data-slot="11:50–12:00">11:50–12:00（剩 8 位）</button>
+            <button class="slot" data-slot="12:00–12:10">12:00–12:10（剩 3 位）</button>
+            <button class="slot" data-slot="12:10–12:20">12:10–12:20（剩 12 位）</button>
+            <button class="slot" data-slot="12:20–12:30">12:20–12:30（剩 16 位）</button>
+          </div>
+          <div class="cart" id="cart" aria-live="polite">尚未選擇餐點與取餐時段。</div>
+          <button class="primary" id="confirm" disabled>確認模擬訂餐</button>
+          <div class="result" id="result" aria-live="polite">
+            <strong>訂餐完成，請於指定時段至 2 號取餐區領餐。</strong><br>
+            取餐碼：<span class="code" id="pickup-code">—</span>
+            <div class="status" aria-label="訂單進度"><span class="active">已接單</span><span>備餐中</span><span>可取餐</span></div>
+          </div>
+        </div>
+      </section>
+      <aside class="card" aria-labelledby="board-title">
+        <h2 id="board-title">店家訂單看板</h2>
+        <div class="counter"><strong id="queue-count">目前 3 筆</strong><br><span class="muted">系統依取餐時段排序，避免所有訂單同時湧入廚房。</span></div>
+        <table>
+          <thead><tr><th>取餐碼</th><th>餐點</th><th>時段</th><th>狀態</th></tr></thead>
+          <tbody id="board">
+            <tr><td>A318</td><td>蔬食咖哩飯</td><td>11:50–12:00</td><td><span class="pill ready">可取餐</span></td></tr>
+            <tr><td>B124</td><td>香煎雞腿便當</td><td>12:00–12:10</td><td><span class="pill waiting">備餐中</span></td></tr>
+            <tr><td>C207</td><td>番茄牛肉麵</td><td>12:10–12:20</td><td><span class="pill">已接單</span></td></tr>
+          </tbody>
+        </table>
+        <button class="secondary" id="next-status" style="margin-top:1rem">模擬完成下一筆訂單</button>
+        <p class="muted">PBL 討論提示：訂餐系統是否真的減少等待？它是否可能增加廚房人員的操作負擔？還需要哪些資料驗證？</p>
+      </aside>
+    </div>
+  </main>
+  <script>
+    const state = { food:null, price:0, slot:null, order:null };
+    const cart = document.getElementById('cart'); const confirm = document.getElementById('confirm');
+    function updateCart(){
+      cart.textContent = state.food && state.slot ? `已選擇：${state.food} $${state.price}｜取餐：${state.slot}` : state.food ? `已選擇：${state.food} $${state.price}；請選取餐時段。` : '尚未選擇餐點與取餐時段。';
+      confirm.disabled = !(state.food && state.slot);
+    }
+    document.querySelectorAll('.add').forEach(btn => btn.addEventListener('click', () => { state.food=btn.dataset.food; state.price=btn.dataset.price; updateCart(); }));
+    document.querySelectorAll('.slot').forEach(btn => btn.addEventListener('click', () => { document.querySelectorAll('.slot').forEach(x=>x.classList.remove('selected')); btn.classList.add('selected'); state.slot=btn.dataset.slot; updateCart(); }));
+    confirm.addEventListener('click', () => {
+      const code='P'+Math.floor(100+Math.random()*900); state.order={ code, food:state.food, slot:state.slot };
+      document.getElementById('pickup-code').textContent=code; document.getElementById('result').classList.add('show');
+      const row=document.createElement('tr'); row.innerHTML=`<td>${code}</td><td>${state.food}</td><td>${state.slot}</td><td><span class="pill">已接單</span></td>`; document.getElementById('board').append(row);
+      document.getElementById('queue-count').textContent=`目前 ${document.querySelectorAll('#board tr').length} 筆`;
+      confirm.disabled=true; confirm.textContent='已完成模擬訂餐';
+    });
+    document.getElementById('next-status').addEventListener('click', () => {
+      const pills=[...document.querySelectorAll('#board .pill')]; const target=pills.find(p=>!p.classList.contains('ready'));
+      if (!target) return; if (target.classList.contains('waiting')) { target.className='pill ready'; target.textContent='可取餐'; } else { target.className='pill waiting'; target.textContent='備餐中'; }
+    });
+  </script>
+</body>
+</html>
